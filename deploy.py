@@ -35,7 +35,7 @@ commands_gunicorn = """
 cd ../home/k3c
 . .venv/bin/activate
 pkill gunicorn
-gunicorn --certfile=.cert/cer.cer --keyfile=.cert/key.key -w 2 -b 0.0.0.0:443 'backend.app:app' --daemon
+gunicorn --certfile=.cer/cer.cer --keyfile=.cer/key.key -w 2 -b 0.0.0.0:443 'backend.app:app' --daemon
 """
 
 if os.path.exists(dist_source):
