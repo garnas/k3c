@@ -33,8 +33,11 @@ pip install -r requirements.txt
 
 commands_gunicorn = """
 cd ../home/k3c
+echo "Activate .venv"
 . .venv/bin/activate
+echo "Kill gunicorn"
 pkill gunicorn
+echo "(Re)start gunicorn"
 gunicorn --certfile=.cer/cer.cer --keyfile=.cer/key.key -w 2 -b 0.0.0.0:443 'backend.app:app' --daemon
 """
 
