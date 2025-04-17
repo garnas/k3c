@@ -25,6 +25,7 @@ commands_build = f"""
 cd ../home
 rm -rf k3c
 git clone {git_source}
+chmod 777 k3c
 cd k3c/backend
 python3 -m venv .venv
 . .venv/bin/activate
@@ -37,8 +38,6 @@ cd ../home/k3c/backend
 pkill gunicorn
 gunicorn --certfile=.cert/cer.cer --keyfile=.cert/key.key -w 2 -b 0.0.0.0:443 'backend.app:app' --daemon
 """
-print(commands_build)
-print(commands_gunicorn)
 
 if os.path.exists(dist_source):
     print(f"Removing {dist_source} ...")
@@ -60,12 +59,12 @@ try:
     print(stdout.read().decode())
     print(stderr.read().decode())
     with SCPClient(ssh.get_transport()) as scp:
-        scp.put(dist_source, dist_target, recursive=True)
         scp.put(cert_source, cert_target, recursive=True)
+        scp.put(dist_source, dist_target, recursive=True)
 
-    _, stdout, stderr = ssh.exec_command(commands_gunicorn)
-    print(stdout.read().decode())
-    print(stderr.read().decode())
+    # _, stdout, stderr = ssh.exec_command(commands_gunicorn)
+    # print(stdout.read().decode())
+    # print(stderr.read().decode())
 finally:
     # Close the connection
     ssh.close()
