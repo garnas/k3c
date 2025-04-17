@@ -13,7 +13,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 class SidHandler:
-    sid: str | None = None
+    sids: set[str] = {}
 
 @app.route("/")
 def index():
@@ -40,9 +40,10 @@ def broadcast():
 
     # Optional: If you want to use the default 'message' event name, you can use:
     # socketio.send("Someone just accessed the root ('/') page!")
-    message_payload = {'data': f"0PAYLOAD!!{SidHandler.sid}"}
-    socketio.emit(event_name, message_payload, to=SidHandler.sid)
-    app.logger.info(f"Sent message via route to (SID: {SidHandler.sid}): HELLO!!")
+    message_payload = {'data': f"0PAYLOAD!!{SidHandler.sids}"}
+    for sid in SidHandler.sids:
+        socketio.emit(event_name, message_payload, to=sid)
+    app.logger.info(f"Sent message via route to (SID: {SidHandler.sids}): HELLO!!")
 
     # Return the standard HTTP response for the route
     return "Hello World! A broadcast message was sent to all connected Socket.IO clients."
@@ -50,12 +51,13 @@ def broadcast():
 # Standard Socket.IO connection event
 @socketio.on('connect')
 def handle_connect():
-    SidHandler.sid = request.sid
+    SidHandler.sids.append(request.sid)
     app.logger.info(f'Client connected {request.sid}')
 
 # Standard Socket.IO disconnection event
 @socketio.on('disconnect')
 def handle_disconnect():
+    SidHandler.sids.pop(request.sid)
     app.logger.info('Client disconnected')
 
 # Custom event handler - rename from 'message' to avoid conflict
