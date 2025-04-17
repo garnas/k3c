@@ -1,10 +1,14 @@
+import logging
 import os
 
 from flask import Flask, send_from_directory, request
 from flask_socketio import SocketIO, emit
 
 _static_folder = os.path.join("..", "frontend", "dist")
+
 app = Flask(__name__, static_folder=_static_folder)
+app.logger.setLevel(logging.INFO)
+
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 
