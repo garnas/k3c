@@ -13,9 +13,9 @@ password = config["password"]
 port = int(config["port"])
 frontend_dir = os.path.join("frontend")
 dist_source = os.path.join(frontend_dir, "dist")
-dist_target = "/home/myapp/frontend"
+dist_target = "/home/k3c/frontend"
 cert_source = os.path.join(".cert")
-cert_target = "/home/myapp/.cert"
+cert_target = "/home/k3x/.cert"
 
 if os.path.exists(dist_source):
     print(f"Removing {dist_source} ...")
@@ -32,7 +32,7 @@ ssh.load_system_host_keys()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
 commands_build = f"""
-cd /home/myapp
+cd /home/k3c
 rm -rf {dist_target}
 rm -rf {cert_target}
 git fetch origin master
@@ -42,7 +42,7 @@ git clean -fd
 """
 
 commands_gunicorn = """
-cd /home/myapp
+cd /home/k3c
 . .venv/bin/activate
 pkill gunicorn
 gunicorn --certfile=.cert/cer.cer --keyfile=.cert/key.key -w 2 -b 0.0.0.0:443 'backend.app:app' --daemon
