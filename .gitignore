@@ -1,2 +1,7 @@
-.idea
+.env
 .cer
+
+.venv
+__pycache__
+
+.idea
