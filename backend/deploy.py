@@ -12,18 +12,18 @@ username = config["server.username"]
 password = config["server.password"]
 port = int(config["server.port"])
 
-frontend_dir = os.path.join("frontend")
+frontend_dir = os.path.join("..", "frontend")
 dist_source = os.path.join(frontend_dir, "dist")
 dist_target = "/home/k3c/frontend"
 
-cert_source = os.path.join(".cert")
-cert_target = "/home/k3x/.cert"
+cert_source = os.path.join("..", ".cer")
+cert_target = "/home/k3x/.cer"
 
 git_source = config["git.source"]
 
 commands_build = f"""
 cd ../home
-rm -rf /k3c
+rm -rf k3c
 git clone {git_source}
 cd k3c/backend
 python3 -m venv .venv
@@ -32,14 +32,13 @@ pip install -r requirements.txt
 """
 
 commands_gunicorn = """
-cd /home/k3c
+cd ../home/k3c/backend
 . .venv/bin/activate
 pkill gunicorn
 gunicorn --certfile=.cert/cer.cer --keyfile=.cert/key.key -w 2 -b 0.0.0.0:443 'backend.app:app' --daemon
 """
 print(commands_build)
 print(commands_gunicorn)
-exit()
 
 if os.path.exists(dist_source):
     print(f"Removing {dist_source} ...")
