@@ -16,7 +16,7 @@ frontend_dir = os.path.join("frontend")
 dist_source = os.path.join(frontend_dir, "dist")
 dist_target = "/home/k3c/frontend"
 
-cert_source = os.path.join("..", ".cer")
+cert_source = os.path.join(".cer")
 cert_target = "/home/k3c/.cer"
 
 git_source = config["git.source"]
