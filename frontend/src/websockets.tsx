@@ -2,12 +2,14 @@
 
 import React, {useState, useCallback, useEffect, useRef} from 'react';
 import {io, Socket} from 'socket.io-client';
+import MeasurementDto from "./measurementDto.tsx";
 
 // Define the component using React.FC
 export const WebSocketDemo: React.FC = () => {
     // URL of the Socket.IO server
     // Use http:// because the default Flask server is not HTTPS
     const [messageHistory, setMessageHistory] = useState<string[]>([]);
+    const [measurementHistory, setMeasurementHistory] = useState<MeasurementDto[]>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState<string>('');
 
@@ -61,6 +63,12 @@ export const WebSocketDemo: React.FC = () => {
             console.log('Received server broadcast:', data);
             // Add the broadcast message to the history
             setMessageHistory(prev => [...prev, `BROADCAST: ${data.data}`]);
+        });
+
+        socket.on('sensor', (data: MeasurementDto) => {
+            console.log('Received sensor data:', data);
+            // Add the broadcast message to the history
+            setMeasurementHistory(prev => [...prev, data]);
         });
 
         // --- Cleanup on component unmount ---
@@ -128,7 +136,12 @@ export const WebSocketDemo: React.FC = () => {
             </div>
 
             <p>Connection Status: <b>{isConnected ? 'Connected' : 'Disconnected'}</b></p>
-
+            <h3>Measurements History:</h3>
+            <ul>
+                {measurementHistory.map((mst, idx) => (
+                    <li key={idx}>{mst.temperature}</li>
+                ))}
+            </ul>
             <h3>Message History:</h3>
             <ul>
                 {messageHistory.map((msg, idx) => (

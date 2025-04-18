@@ -77,6 +77,11 @@ def handle_my_send_message(data):
     # Echo the message back to the specific client who sent it
     emit('my_response', {'data': 'Server received: ' + str(data)}, broadcast=True)
 
+@socketio.on(message='json', namespace='/sensor')
+def handle_sensor_message(data):
+    app.logger.info('received sensor data: ' + str(data)) # Handle dict or str
+    # Echo the message back to the specific client who sent it
+    socketio.emit("sensor", data)
 
 # You can still handle the default 'message' event if needed
 @socketio.on('message')
