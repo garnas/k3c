@@ -38,7 +38,7 @@ echo "Activate .venv"
 echo "Kill gunicorn"
 pkill gunicorn
 echo "(Re)start gunicorn"
-gunicorn --certfile=.cer/cer.cer --keyfile=.cer/key.key -w 1 -b 0.0.0.0:443 -k gevent 'backend.app:app'
+gunicorn --certfile=.cer/cer.cer --keyfile=.cer/key.key -w 1 -b 0.0.0.0:443 -k gevent 'backend.app:app' --daemon
 """
 
 if os.path.exists(dist_source):

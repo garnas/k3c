@@ -1,7 +1,7 @@
 import logging
 import os
 
-from flask import Flask, send_from_directory, request
+from flask import Flask, request
 from flask_socketio import SocketIO, emit
 
 _static_folder = os.path.join("..", "frontend", "dist")
@@ -13,7 +13,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 class SidHandler:
-    sids: set[str] = {}
+    sids: set[str] = set()
 
 @app.route("/")
 def index():
@@ -51,13 +51,13 @@ def broadcast():
 # Standard Socket.IO connection event
 @socketio.on('connect')
 def handle_connect():
-    SidHandler.sids.append(request.sid)
+    SidHandler.sids.add(request.sid)
     app.logger.info(f'Client connected {request.sid}')
 
 # Standard Socket.IO disconnection event
 @socketio.on('disconnect')
 def handle_disconnect():
-    SidHandler.sids.pop(request.sid)
+    SidHandler.sids.remove(request.sid)
     app.logger.info('Client disconnected')
 
 # Custom event handler - rename from 'message' to avoid conflict
