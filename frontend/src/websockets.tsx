@@ -7,13 +7,13 @@ import {io, Socket} from 'socket.io-client';
 export const WebSocketDemo: React.FC = () => {
     // URL of the Socket.IO server
     // Use http:// because the default Flask server is not HTTPS
-    const [serverUrl] = useState<string>('http://127.0.0.1:5000');
     const [messageHistory, setMessageHistory] = useState<string[]>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState<string>('');
 
     // useRef to hold the socket instance without causing re-renders on change
     const socketRef = useRef<Socket | null>(null);
+    const serverUrl = window.location.origin
 
     useEffect(() => {
         // Initialize the socket connection
