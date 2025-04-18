@@ -1,12 +1,16 @@
 from time import sleep
 
+import requests
 import socketio
 from dotenv import dotenv_values
 
 from sensor import Measurement
 # from sensor_mock import Measurement
 
-sio = socketio.Client()
+http_session = requests.Session()
+http_session.verify = False
+sio = socketio.Client(http_session=http_session)
+# sio = socketio.Client()
 
 config = dotenv_values(".env")
 
