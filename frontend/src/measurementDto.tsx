@@ -3,14 +3,14 @@ export default class MeasurementDto {
     pressure: number;
     humidity: number;
     gas_resistance: number;
-    timestamp: number;
+    timestamp: string;
 
     constructor({temperature, pressure, humidity, gas_resistance, timestamp}: {
         temperature: number;
         pressure: number;
         humidity: number;
         gas_resistance: number;
-        timestamp: number
+        timestamp: string
     }) {
         this.temperature = temperature;
         this.pressure = pressure;

@@ -1,12 +1,11 @@
 import logging
 import os
-from datetime import datetime
-from decimal import Decimal
+from datetime import datetime, timedelta
 
+from dotenv import dotenv_values
 from flask import Flask, request
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
-from dotenv import dotenv_values
 
 from backend.sqlc.gen.query import CreateMeasurementParams, Querier
 
@@ -40,6 +39,16 @@ def index():
 @app.route("/<path:path>")
 def public(path):
     return app.send_static_file(path)
+
+@app.route("/measurements-weekly")
+def measurements_weekly():
+    with db.engine.connect() as connection:
+        q = Querier(conn=connection)
+        one_week_ago = datetime.now() - timedelta(days=100)
+        result = q.list_measurements_by_time(
+            timestamp=one_week_ago
+        )
+        return [r for r in result]
 
 @app.route('/b')
 def broadcast():

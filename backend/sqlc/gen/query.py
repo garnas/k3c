@@ -56,7 +56,7 @@ ORDER BY timestamp DESC
 LIST_MEASUREMENTS_BY_TIME = """-- name: list_measurements_by_time \\:many
 
 SELECT measurements_id, temperature, humidity, pressure, gas_resistance, timestamp FROM measurements
-WHERE timestamp >= :p1 AND timestamp <= :p2
+WHERE timestamp >= :p1
 ORDER BY timestamp ASC
 """
 
@@ -122,7 +122,7 @@ class Querier:
             )
 
     def list_measurements_by_time(self, *, timestamp: Optional[datetime.datetime]) -> Iterator[models.Measurement]:
-        result = self._conn.execute(sqlalchemy.text(LIST_MEASUREMENTS_BY_TIME), {"p1": timestamp, "p2": timestamp})
+        result = self._conn.execute(sqlalchemy.text(LIST_MEASUREMENTS_BY_TIME), {"p1": timestamp})
         for row in result:
             yield models.Measurement(
                 measurements_id=row[0],
