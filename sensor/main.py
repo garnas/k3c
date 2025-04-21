@@ -37,9 +37,9 @@ def main():
 
             print("Waiting for sensor data")
             measurement = Measurement.from_sensor()
-            sio.emit(event='json', data=measurement.__dict__, namespace='/sensor')
-            print("Sent sensor data")
-            sleep(1)
+            if measurement:
+                sio.emit(event='json', data=measurement.__dict__, namespace='/sensor')
+                print("Sent sensor data")
     except Exception as e:
         print(e)
         print("Retrying in 5 seconds...")
