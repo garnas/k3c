@@ -5,5 +5,5 @@ dotenv==0.9.9
 paramiko==3.5.1
 gunicorn==23.0.0
 gevent==25.4.1
-SQLAlchemy==2.0.40
 psycopg2-binary==2.9.10
+Flask-SQLAlchemy==3.1.1

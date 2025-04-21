@@ -1,13 +1,31 @@
 import logging
 import os
+from datetime import datetime
+from decimal import Decimal
 
 from flask import Flask, request
 from flask_socketio import SocketIO, emit
+from flask_sqlalchemy import SQLAlchemy
+from dotenv import dotenv_values
+
+from backend.sqlc.gen.query import CreateMeasurementParams, Querier
 
 _static_folder = os.path.join("..", "frontend", "dist")
 
 app = Flask(__name__, static_folder=_static_folder)
 app.logger.setLevel(logging.INFO)
+
+config = dotenv_values(".env")
+DB_NAME = config.get("db_name")
+DB_USER = config.get("db_user")
+DB_PASSWORD = config.get("db_password")
+DB_HOST = config.get("db_host")
+DB_PORT = config.get("db_port")
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+db = SQLAlchemy()
+db.init_app(app)
+
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -80,8 +98,20 @@ def handle_my_send_message(data):
 @socketio.on(message='json', namespace='/sensor')
 def handle_sensor_message(data):
     app.logger.info('received sensor data: ' + str(data)) # Handle dict or str
-    # Echo the message back to the specific client who sent it
-    socketio.emit("sensor", data)
+    with db.engine.connect() as connection:
+        q = Querier(conn=connection)
+        params = CreateMeasurementParams(
+            timestamp=datetime.now(),
+            humidity=data["humidity"],
+            temperature=data["temperature"],
+            pressure=data["pressure"],
+            gas_resistance=data["gas_resistance"],
+        )
+        q.create_measurement(
+            arg=params
+        )
+        connection.commit()
+    return "CREATED"
 
 # You can still handle the default 'message' event if needed
 @socketio.on('message')

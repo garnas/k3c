@@ -4,15 +4,20 @@ import requests
 import socketio
 from dotenv import dotenv_values
 
-from sensor import Measurement
-# from sensor_mock import Measurement
+config = dotenv_values("../.env")
+
+if config["sensor.is_mocked"].lower() == "true":
+    from sensor_mock import Measurement
+else:
+    from sensor import Measurement
+
 
 http_session = requests.Session()
 http_session.verify = False
+
 sio = socketio.Client(http_session=http_session)
 # sio = socketio.Client()
 
-config = dotenv_values(".env")
 
 @sio.event
 def connect():
