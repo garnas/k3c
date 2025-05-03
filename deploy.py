@@ -19,6 +19,9 @@ dist_target = "/home/k3c/frontend"
 cert_source = os.path.join(".cer")
 cert_target = "/home/k3c/.cer"
 
+dotenv_source = os.path.join(".env-prod")
+dotenv_target = "/home/k3c/.env"
+
 git_source = config["git.source"]
 
 commands_build = f"""
@@ -63,6 +66,7 @@ try:
     with SCPClient(ssh.get_transport()) as scp:
         scp.put(cert_source, cert_target, recursive=True)
         scp.put(dist_source, dist_target, recursive=True)
+        scp.put(dotenv_source, dotenv_target, recursive=True)
 
     _, stdout, stderr = ssh.exec_command(commands_gunicorn)
     print(stdout.read().decode())
