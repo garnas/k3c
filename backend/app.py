@@ -3,10 +3,11 @@ import os
 from datetime import datetime, timedelta
 
 from dotenv import dotenv_values
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
 
+from backend.measurement_manager import measurement_manager
 from backend.sqlc.gen.query import CreateMeasurementParams, Querier
 
 _static_folder = os.path.join("..", "frontend", "dist")
@@ -45,13 +46,13 @@ def measurements_weekly():
     app.logger.info(db.engine.pool.status())
     with db.engine.connect() as connection:
         q = Querier(conn=connection)
-        one_week_ago = datetime.now() - timedelta(days=100)
+        one_week_ago = datetime.now() - timedelta(days=7)
         result = q.list_measurements_by_time(
             timestamp=one_week_ago
         )
         app.logger.info(db.engine.pool.status())
-        fetched = [r for r in result][::2][::2]
-    return fetched
+        fetched = [measurement_manager.serialize_measurement(r) for r in result][::2][::2]
+    return jsonify(fetched)
 
 @app.route('/b')
 def broadcast():

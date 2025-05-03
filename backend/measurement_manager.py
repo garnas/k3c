@@ -2,7 +2,12 @@ from dotenv import dotenv_values
 
 from sqlalchemy import create_engine
 
+from backend.sqlc.gen.models import Measurement
 from backend.sqlc.gen.query import Querier
+
+import dataclasses
+import decimal
+import datetime
 
 
 class _MeasurementManager:
@@ -18,5 +23,16 @@ class _MeasurementManager:
         self.querier = Querier(conn=engine.connect())
 
     querier: Querier
+
+    @staticmethod
+    def serialize_measurement(measurement: Measurement) -> dict:
+        return {
+            "measurements_id": measurement.measurements_id,
+            "temperature": float(measurement.temperature) if measurement.temperature is not None else None,
+            "humidity": float(measurement.humidity) if measurement.humidity is not None else None,
+            "pressure": float(measurement.pressure) if measurement.pressure is not None else None,
+            "gas_resistance": float(measurement.gas_resistance) if measurement.gas_resistance is not None else None,
+            "timestamp": measurement.timestamp.timestamp() if measurement.timestamp is not None else None,
+        }
 
 measurement_manager = _MeasurementManager()

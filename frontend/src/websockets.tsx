@@ -4,6 +4,7 @@ import React, {useState, useCallback, useEffect, useRef} from 'react';
 import {io, Socket} from 'socket.io-client';
 import MeasurementDto from "./measurementDto.tsx";
 import LiveMeasurementCard from "./liveMeasurmentCard.tsx";
+import {RawMeasurementDto} from "./rawMeasurementDto.tsx";
 
 // Define the component using React.FC
 export const WebSocketDemo: React.FC = () => {
@@ -56,10 +57,9 @@ export const WebSocketDemo: React.FC = () => {
         });
 
         // Listener for your custom response event from the server
-        socket.on('live_measurement', (incomingLiveMeasurement: MeasurementDto) => {
-            console.log('Received live_measurement:');
-            console.log('Received live_measurement:', incomingLiveMeasurement);
-            setLiveMeasurement(incomingLiveMeasurement)
+        socket.on('live_measurement', (rawMeasurementDto: RawMeasurementDto) => {
+            const measurement = MeasurementDto.fromRaw(rawMeasurementDto)
+            setLiveMeasurement(measurement);
         });
 
 
@@ -121,8 +121,6 @@ export const WebSocketDemo: React.FC = () => {
         <div>
             <h2>Socket.IO Demo</h2>
             <p>Server URL: {serverUrl}</p>
-            {/* Add button to manually change URL if needed */}
-            {/* <button onClick={() => setServerUrl('http://new-url:port')}>Change URL</button> */}
             <h1>Live Measurment</h1>
             <h1>{liveMeasurement?.temperature}</h1>
             <LiveMeasurementCard measurement={liveMeasurement}/>

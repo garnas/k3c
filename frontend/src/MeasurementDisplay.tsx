@@ -145,7 +145,6 @@ const MeasurementsDisplay: React.FC<MeasurementsDisplayProps> = ({measurements})
                 {Array.from({length: 24}, (_, i) => i + 1) // Creates an array [1, 2, 3, ..., 24]
                     .map(index => {
                         const hour = index - 1
-                        console.log(hour)
                         // Check if data actually exists for this hour in avgHourly
                         if (avgHourly && avgHourly[hour]) {
                             // Dynamically create the label with pluralization
