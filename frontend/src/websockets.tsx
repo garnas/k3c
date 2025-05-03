@@ -3,6 +3,7 @@
 import React, {useState, useCallback, useEffect, useRef} from 'react';
 import {io, Socket} from 'socket.io-client';
 import MeasurementDto from "./measurementDto.tsx";
+import LiveMeasurementCard from "./liveMeasurmentCard.tsx";
 
 // Define the component using React.FC
 export const WebSocketDemo: React.FC = () => {
@@ -10,6 +11,7 @@ export const WebSocketDemo: React.FC = () => {
     // Use http:// because the default Flask server is not HTTPS
     const [messageHistory, setMessageHistory] = useState<string[]>([]);
     const [measurementHistory, setMeasurementHistory] = useState<MeasurementDto[]>([]);
+    const [liveMeasurement, setLiveMeasurement] = useState<MeasurementDto | null>(null);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState<string>('');
 
@@ -52,6 +54,14 @@ export const WebSocketDemo: React.FC = () => {
             console.log('Received my_response:', data);
             setMessageHistory(prev => [...prev, `Server: ${data.data}`]);
         });
+
+        // Listener for your custom response event from the server
+        socket.on('live_measurement', (incomingLiveMeasurement: MeasurementDto) => {
+            console.log('Received live_measurement:');
+            console.log('Received live_measurement:', incomingLiveMeasurement);
+            setLiveMeasurement(incomingLiveMeasurement)
+        });
+
 
         // Listener for the default 'message' event from the server (if you use it)
         socket.on('message', (data: string) => {
@@ -113,7 +123,9 @@ export const WebSocketDemo: React.FC = () => {
             <p>Server URL: {serverUrl}</p>
             {/* Add button to manually change URL if needed */}
             {/* <button onClick={() => setServerUrl('http://new-url:port')}>Change URL</button> */}
-
+            <h1>Live Measurment</h1>
+            <h1>{liveMeasurement?.temperature}</h1>
+            <LiveMeasurementCard measurement={liveMeasurement}/>
             <div>
                 <input
                     type="text"

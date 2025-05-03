@@ -6,8 +6,8 @@ function App() {
 
   return (
     <>
-        <MeasurementsOverview/>
         <WebSocketDemo/>
+        <MeasurementsOverview/>
     </>
   )
 }

@@ -56,21 +56,18 @@ const MeasurementsDisplay: React.FC<MeasurementsDisplayProps> = ({measurements})
     const now = new Date();
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    console.log(twentyFourHoursAgo)
 
     // Filter measurements for each period
     const last24hMeasurements = measurements.filter(m => {
         const measurementDate = new Date(m.timestamp); // Assumes timestamp is parsable by new Date()
         return measurementDate >= twentyFourHoursAgo;
     });
-    console.log(last24hMeasurements)
 
     // Assuming "Last Week" means the same as "Last 7 Days" given the input description
     const last7dMeasurements = measurements.filter(m => {
         const measurementDate = new Date(m.timestamp);
         return measurementDate >= sevenDaysAgo;
     });
-    console.log(last7dMeasurements)
 
     // Calculate averages for each period
     const avgLast24h = calculateAverages(last24hMeasurements);
@@ -86,7 +83,6 @@ const MeasurementsDisplay: React.FC<MeasurementsDisplayProps> = ({measurements})
         avgHourly[i] = calculateAverages(lastHourIMeasurements)
     }
 
-    console.log(avgHourly)
     // Helper to render a table row for averages
     const renderAverageRow = (avgData: AverageMeasurements, periodLabel: string) => (
         <tr key={periodLabel}>

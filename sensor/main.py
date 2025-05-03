@@ -29,8 +29,8 @@ def disconnect(reason):
     print('disconnected from server, reason:', reason)
 
 def main():
-    try:
-        while True:
+    while True:
+        try:
             if not sio.connected:
                 print("Connecting to server")
                 sio.connect(config['server.url'], namespaces="/sensor")
@@ -40,13 +40,11 @@ def main():
             if measurement:
                 sio.emit(event='json', data=measurement.__dict__, namespace='/sensor')
                 print("Sent sensor data")
-            sleep(3)
-    except Exception as e:
-        print(e)
-        print("Retrying in 5 seconds...")
-        sleep(5)
-        main()
-
+                sleep(1)
+        except Exception as e:
+            print(e)
+            print("Retrying in 5 seconds...")
+            sleep(5)
 
 if __name__ == '__main__':
     main()

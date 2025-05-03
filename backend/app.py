@@ -42,13 +42,16 @@ def public(path):
 
 @app.route("/measurements-weekly")
 def measurements_weekly():
+    app.logger.info(db.engine.pool.status())
     with db.engine.connect() as connection:
         q = Querier(conn=connection)
         one_week_ago = datetime.now() - timedelta(days=100)
         result = q.list_measurements_by_time(
             timestamp=one_week_ago
         )
-        return [r for r in result]
+        app.logger.info(db.engine.pool.status())
+        fetched = [r for r in result][::2][::2]
+    return fetched
 
 @app.route('/b')
 def broadcast():
@@ -107,6 +110,7 @@ def handle_my_send_message(data):
 @socketio.on(message='json', namespace='/sensor')
 def handle_sensor_message(data):
     app.logger.info('received sensor data: ' + str(data)) # Handle dict or str
+    app.logger.info(db.engine.pool.status())
     with db.engine.connect() as connection:
         q = Querier(conn=connection)
         params = CreateMeasurementParams(
@@ -120,10 +124,19 @@ def handle_sensor_message(data):
             arg=params
         )
         connection.commit()
+    app.logger.info("!!!")
+    for sid in SidHandler.sids:
+        # socketio.emit(event_name, message_payload, )
+        socketio.emit('live_measurement', data, to=sid)
     return "CREATED"
 
 # You can still handle the default 'message' event if needed
 @socketio.on('message')
 def handle_message(data):
+    app.logger.info('received default message: ' + str(data))
+    emit('message', 'Server echo: ' + str(data)) # Echo back on 'message' event
+
+@socketio.on('live_measurement')
+def handle_live_measurement(data):
     app.logger.info('received default message: ' + str(data))
     emit('message', 'Server echo: ' + str(data)) # Echo back on 'message' event
