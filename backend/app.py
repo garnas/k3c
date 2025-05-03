@@ -110,8 +110,7 @@ def handle_my_send_message(data):
 
 @socketio.on(message='json', namespace='/sensor')
 def handle_sensor_message(data):
-    app.logger.info('received sensor data: ' + str(data)) # Handle dict or str
-    app.logger.info(db.engine.pool.status())
+    app.logger.info('received sensor data: ' + str(data))
     with db.engine.connect() as connection:
         q = Querier(conn=connection)
         params = CreateMeasurementParams(
@@ -125,7 +124,6 @@ def handle_sensor_message(data):
             arg=params
         )
         connection.commit()
-    app.logger.info("!!!")
     for sid in SidHandler.sids:
         # socketio.emit(event_name, message_payload, )
         socketio.emit('live_measurement', data, to=sid)

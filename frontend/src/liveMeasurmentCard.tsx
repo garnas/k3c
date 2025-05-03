@@ -11,23 +11,23 @@ const LiveMeasurementCard: React.FC<{ measurement: MeasurementDto | null }> = ({
   }
 
   return (
-    <div className="max-w-sm mx-auto bg-white p-6 rounded-2xl shadow-lg border">
-      <h2 className="text-xl font-bold text-center mb-4">Live Measurement</h2>
-      <div className="grid grid-cols-2 gap-4 text-gray-800">
-        <div>🌡️ Temperature:</div>
-        <div className="text-right font-medium">{measurement.temperature} °C</div>
+    <div className="mx-auto bg-white p-6 rounded-2xl shadow-lg border">
+      <h2 className="text-xl font-bold mb-4">Live Measurement</h2>
+      <div className="grid grid-cols-3 gap-4 text-gray-800">
+        <div className="text-left">🌡️ Temperature:</div>
+        <div className="text-right font-medium">{measurement.temperature.toFixed(2)} °C</div>
 
-        <div>🌬️ Pressure:</div>
-        <div className="text-right font-medium">{measurement.pressure} hPa</div>
+        <div className="text-left">🌬️ Pressure:</div>
+        <div className="text-right font-medium">{measurement.pressure.toFixed(2)} hPa</div>
 
-        <div>💧 Humidity:</div>
-        <div className="text-right font-medium">{measurement.humidity} %</div>
+        <div className="text-left">💧 Humidity:</div>
+        <div className="text-right font-medium">{measurement.humidity.toFixed(2)} %</div>
 
-        <div>🔥 Gas Resistance:</div>
-        <div className="text-right font-medium">{measurement.gas_resistance} Ω</div>
+        <div className="text-left">🔥 Gas Resistance:</div>
+        <div className="text-right font-medium">{measurement.gas_resistance.toFixed(2)} Ω</div>
 
-        <div>🕒 Timestamp:</div>
-        <div className="text-right font-mono text-sm text-gray-600">{new Date(measurement.timestamp).toLocaleString()}</div>
+        <div className="text-left">🕒 Timestamp:</div>
+        <div className="text-right font-mono font-medium text-gray-600">{MeasurementDto.toDateString(measurement)}</div>
       </div>
     </div>
   );
